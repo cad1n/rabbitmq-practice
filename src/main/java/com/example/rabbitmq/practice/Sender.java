@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.rabbitmq.practice;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -6,7 +6,7 @@ import com.rabbitmq.client.ConnectionFactory;
 
 public class Sender {
 
-    private static String NAME_QUEUE = "HELLO";
+    private static final String NAME_QUEUE = "HELLO";
 
     public static void main(String[] args) throws Exception {
         // creating the connection
