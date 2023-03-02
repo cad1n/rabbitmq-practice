@@ -36,7 +36,7 @@ public class ReceiverWork {
         //declaring the queue that will be used
         channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
 
-        //setting up the callback to show in logs
+        //setting up the callback logging to confirm that the message has been received
         DeliverCallback deliverCallback = (ConsumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             System.out.println("[*] Received message '" + message + "'");
