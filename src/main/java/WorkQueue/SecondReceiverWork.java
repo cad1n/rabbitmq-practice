@@ -1,15 +1,20 @@
-package com.example.demo;
+package WorkQueue;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
-import org.springframework.amqp.support.ConsumerTagStrategy;
 
 import java.nio.charset.StandardCharsets;
 
-public class Receiver {
-    private static String NAME_QUEUE = "HELLO";
+public class SecondReceiverWork {
+    private static final String NAME_QUEUE = "Work";
+
+    private static void doWork(String task) throws InterruptedException {
+        for (char ch : task.toCharArray()) {
+            if (ch == '.') Thread.sleep(1000);
+        }
+    }
 
     public static void main(String[] args) throws Exception {
         // creating the connection
@@ -31,13 +36,23 @@ public class Receiver {
         //declaring the queue that will be used
         channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
 
+        //setting up the callback logging to confirm that the message has been received
         DeliverCallback deliverCallback = (ConsumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             System.out.println("[*] Received message '" + message + "'");
+            try {
+                doWork(message);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                System.out.println("[X] Done");
+                channel1.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+            }
         };
 
         //consuming the messages
-        channel1.basicConsume(NAME_QUEUE, true, deliverCallback, ConsumerTag -> {
+        boolean autoAck = false; //ack is true = you will utilize it
+        channel1.basicConsume(NAME_QUEUE, autoAck, deliverCallback, ConsumerTag -> {
         });
     }
 }
