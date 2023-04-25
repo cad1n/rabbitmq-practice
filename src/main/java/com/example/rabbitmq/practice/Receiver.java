@@ -24,11 +24,11 @@ public class Receiver {
         //System.out.println(connection.hashCode());
 
         //creating a new channel
-        Channel channel1 = connection.createChannel();
-        System.out.println(channel1);
+        Channel channel = connection.createChannel();
+        System.out.println(channel);
 
         //declaring the queue that will be used
-        channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
+        channel.queueDeclare(NAME_QUEUE, false, false, false, null);
 
         //setting up the callback logging to confirm that the message has been received
         DeliverCallback deliverCallback = (ConsumerTag, delivery) -> {
@@ -37,7 +37,7 @@ public class Receiver {
         };
 
         //consuming the messages
-        channel1.basicConsume(NAME_QUEUE, true, deliverCallback, ConsumerTag -> {
+        channel.basicConsume(NAME_QUEUE, true, deliverCallback, ConsumerTag -> {
         });
     }
 }

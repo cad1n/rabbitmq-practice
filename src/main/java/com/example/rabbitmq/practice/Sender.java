@@ -18,20 +18,23 @@ public class Sender {
         factory.setPassword("pass123");
         factory.setPort(5672);
 
-        Connection connection = factory.newConnection();
-        //System.out.println(connection.hashCode());
+        try (Connection connection = factory.newConnection()) {
+            //System.out.println(connection.hashCode());
 
-        //creating a new channel
-        Channel channel1 = connection.createChannel();
-        System.out.println(channel1);
+            //creating a new channel
+            Channel channel1 = connection.createChannel();
+            System.out.println(channel1);
 
-        //declaring the queue that will be used
-        channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
+            //declaring the queue that will be used
+            channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
 
-        //sending the message
-        String message = "Hello World";
-        channel1.basicPublish("", NAME_QUEUE, null, message.getBytes());
+            //sending the message
+            String message = "Hello World";
+            channel1.basicPublish("", NAME_QUEUE, null, message.getBytes());
 
-        System.out.print("[x] sent  '" + message + "'");
+            System.out.print("[x] sent  '" + message + "'");
+
+        }
+
     }
 }

@@ -9,9 +9,9 @@ public class SenderWork {
     private static final String NAME_QUEUE = "Work";
 
     public static void main(String[] args) throws Exception {
+
         // creating the connection
         // setting creation information
-
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         factory.setUsername("admin");
@@ -19,18 +19,17 @@ public class SenderWork {
         factory.setPort(5672);
 
         try (Connection connection = factory.newConnection()) {
-            //System.out.println(connection.hashCode());
 
             //creating a new channel
-            Channel channel1 = connection.createChannel();
-            System.out.println(channel1);
+            Channel channel = connection.createChannel();
+            System.out.println(channel);
 
             //declaring the queue that will be used
-            channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
+            channel.queueDeclare(NAME_QUEUE, false, false, false, null);
 
             //sending the message
             String message = ".......";
-            channel1.basicPublish("", NAME_QUEUE, null, message.getBytes());
+            channel.basicPublish("", NAME_QUEUE, null, message.getBytes());
 
             System.out.print("[x] sent  '" + message + "'");
         }

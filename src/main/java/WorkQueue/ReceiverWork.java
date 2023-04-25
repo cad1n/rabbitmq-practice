@@ -17,9 +17,9 @@ public class ReceiverWork {
     }
 
     public static void main(String[] args) throws Exception {
+
         // creating the connection
         // setting creation information
-
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         factory.setUsername("admin");
@@ -30,11 +30,11 @@ public class ReceiverWork {
         //System.out.println(connection.hashCode());
 
         //creating a new channel
-        Channel channel1 = connection.createChannel();
-        System.out.println(channel1);
+        Channel channel = connection.createChannel();
+        System.out.println(channel);
 
         //declaring the queue that will be used
-        channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
+        channel.queueDeclare(NAME_QUEUE, false, false, false, null);
 
         //setting up the callback logging to confirm that the message has been received
         DeliverCallback deliverCallback = (ConsumerTag, delivery) -> {
@@ -50,8 +50,8 @@ public class ReceiverWork {
         };
 
         //consuming the messages
-        boolean autoAck = true; //ack is false = you won't utilize it
-        channel1.basicConsume(NAME_QUEUE, autoAck, deliverCallback, ConsumerTag -> {
+        boolean autoAck = true; //if ack is true the server should consider messages acknowledged once delivered
+        channel.basicConsume(NAME_QUEUE, autoAck, deliverCallback, ConsumerTag -> {
         });
     }
 }
