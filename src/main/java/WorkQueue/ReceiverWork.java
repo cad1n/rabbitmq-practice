@@ -50,7 +50,7 @@ public class ReceiverWork {
         };
 
         //consuming the messages
-        boolean autoAck = true; //if ack is true the server should consider messages acknowledged once delivered
+        boolean autoAck = true; //if auto ack is true the server should consider messages acknowledged once delivered
         channel.basicConsume(NAME_QUEUE, autoAck, deliverCallback, ConsumerTag -> {
         });
     }

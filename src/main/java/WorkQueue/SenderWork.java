@@ -8,7 +8,7 @@ public class SenderWork {
 
     private static final String NAME_QUEUE = "Work";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         // creating the connection
         // setting creation information
@@ -32,6 +32,8 @@ public class SenderWork {
             channel.basicPublish("", NAME_QUEUE, null, message.getBytes());
 
             System.out.print("[x] sent  '" + message + "'");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

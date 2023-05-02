@@ -50,7 +50,7 @@ public class SecondReceiverWork {
         };
 
         //consuming the messages
-        boolean autoAck = false; //if ack is false the server should expect explicit acknowledgements
+        boolean autoAck = false; //if auto ack is false the server should expect explicit acknowledgements
         channel.basicConsume(NAME_QUEUE, autoAck, deliverCallback, ConsumerTag -> {
         });
     }

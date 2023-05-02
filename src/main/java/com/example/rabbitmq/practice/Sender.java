@@ -8,7 +8,7 @@ public class Sender {
 
     private static final String NAME_QUEUE = "HELLO";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         // creating the connection
         // setting creation information
 
@@ -34,6 +34,8 @@ public class Sender {
 
             System.out.print("[x] sent  '" + message + "'");
 
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
