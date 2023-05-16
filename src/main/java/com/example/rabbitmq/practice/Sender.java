@@ -32,7 +32,7 @@ public class Sender {
             String message = "Hello World";
             channel1.basicPublish("", NAME_QUEUE, null, message.getBytes());
 
-            System.out.print("[x] sent  '" + message + "'");
+            System.out.print("[x] Sent  '" + message + "'");
 
         } catch (Exception e) {
             e.printStackTrace();

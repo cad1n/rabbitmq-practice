@@ -1,12 +1,14 @@
-package PubSub;
+package RoutingKey;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public class SenderPubSub {
+public class SenderRoutingKey {
 
-    private static final String NAME_EXCHANGE = "fanoutExchange";
+    private static final String NAME_EXCHANGE = "directExchange";
+    private static final String ROUTING_KEY = "RoutingKeyTest";
+    private static final String SECOND_ROUTING_KEY = "SecondRoutingKeyTest";
 
     public static void main(String[] args) {
 
@@ -25,11 +27,13 @@ public class SenderPubSub {
             System.out.println(channel);
 
             //declaring the exchange that will be used
-            channel.exchangeDeclare(NAME_EXCHANGE, "fanout");
+            channel.exchangeDeclare(NAME_EXCHANGE, "direct");
 
-            //sending the message
-            String message = "Hello! This is a pub/sub system";
-            channel.basicPublish(NAME_EXCHANGE, "", null, message.getBytes());
+            //sending the messages
+            String message = "Hello! This is a RabbitMQ system";
+            String secondMessage = "Hello! This is a routing key based system";
+            channel.basicPublish(NAME_EXCHANGE, ROUTING_KEY, null, message.getBytes());
+            channel.basicPublish(NAME_EXCHANGE, SECOND_ROUTING_KEY, null, secondMessage.getBytes());
 
             System.out.print("[x] Sent  '" + message + "'");
         } catch (Exception e) {

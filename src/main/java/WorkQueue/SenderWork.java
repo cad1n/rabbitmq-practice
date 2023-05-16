@@ -31,7 +31,7 @@ public class SenderWork {
             String message = ".......";
             channel.basicPublish("", NAME_QUEUE, null, message.getBytes());
 
-            System.out.print("[x] sent  '" + message + "'");
+            System.out.print("[x] Sent  '" + message + "'");
         } catch (Exception e) {
             e.printStackTrace();
         }
