@@ -1,17 +1,17 @@
-package com.example.rabbitmq.practice;
+package PubSub;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public class Sender {
+public class SenderPubSub {
 
-    private static final String NAME_QUEUE = "HELLO";
+    private static final String NAME_EXCHANGE = "fanoutExchange";
 
     public static void main(String[] args) {
+
         // creating the connection
         // setting creation information
-
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         factory.setUsername("admin");
@@ -19,24 +19,21 @@ public class Sender {
         factory.setPort(5672);
 
         try (Connection connection = factory.newConnection()) {
-            //System.out.println(connection.hashCode());
 
             //creating a new channel
-            Channel channel1 = connection.createChannel();
-            System.out.println(channel1);
+            Channel channel = connection.createChannel();
+            System.out.println(channel);
 
-            //declaring the queue that will be used
-            channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
+            //declaring the exchange that will be used
+            channel.exchangeDeclare(NAME_EXCHANGE, "fanout");
 
             //sending the message
-            String message = "Hello World";
-            channel1.basicPublish("", NAME_QUEUE, null, message.getBytes());
+            String message = "Hello! This is a pub/sub system";
+            channel.basicPublish(NAME_EXCHANGE, "", null, message.getBytes());
 
             System.out.print("[x] Sent  '" + message + "'");
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

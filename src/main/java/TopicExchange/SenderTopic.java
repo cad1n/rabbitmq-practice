@@ -1,12 +1,13 @@
-package WorkQueue;
+package TopicExchange;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public class SenderWork {
+public class SenderTopic {
 
-    private static final String NAME_QUEUE = "Work";
+    private static final String NAME_EXCHANGE = "topicExchange";
+
 
     public static void main(String[] args) {
 
@@ -24,12 +25,18 @@ public class SenderWork {
             Channel channel = connection.createChannel();
             System.out.println(channel);
 
-            //declaring the queue that will be used
-            channel.queueDeclare(NAME_QUEUE, false, false, false, null);
+            //declaring the exchange that will be used
+            channel.exchangeDeclare(NAME_EXCHANGE, "topic");
 
-            //sending the message
-            String message = ".......";
-            channel.basicPublish("", NAME_QUEUE, null, message.getBytes());
+            //creating the messages
+            String routingKey1 = "quick.orange.rabbit";
+            String message = "Hello! This is the original message";
+            String secondMessage = "Hello! This is the message with the routing key:" + routingKey1;
+            String routingKey2 = "quick.rabbit";
+
+            //sending the messages
+            channel.basicPublish(NAME_EXCHANGE, routingKey1, null, message.getBytes());
+            channel.basicPublish(NAME_EXCHANGE, routingKey2, null, secondMessage.getBytes());
 
             System.out.print("[x] Sent  '" + message + "'");
         } catch (Exception e) {

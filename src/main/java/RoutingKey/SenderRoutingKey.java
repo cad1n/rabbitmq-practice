@@ -1,12 +1,14 @@
-package WorkQueue;
+package RoutingKey;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-public class SenderWork {
+public class SenderRoutingKey {
 
-    private static final String NAME_QUEUE = "Work";
+    private static final String NAME_EXCHANGE = "directExchange";
+    private static final String ROUTING_KEY = "RoutingKeyTest";
+    private static final String SECOND_ROUTING_KEY = "SecondRoutingKeyTest";
 
     public static void main(String[] args) {
 
@@ -24,12 +26,14 @@ public class SenderWork {
             Channel channel = connection.createChannel();
             System.out.println(channel);
 
-            //declaring the queue that will be used
-            channel.queueDeclare(NAME_QUEUE, false, false, false, null);
+            //declaring the exchange that will be used
+            channel.exchangeDeclare(NAME_EXCHANGE, "direct");
 
-            //sending the message
-            String message = ".......";
-            channel.basicPublish("", NAME_QUEUE, null, message.getBytes());
+            //sending the messages
+            String message = "Hello! This is a RabbitMQ system";
+            String secondMessage = "Hello! This is a routing key based system";
+            channel.basicPublish(NAME_EXCHANGE, ROUTING_KEY, null, message.getBytes());
+            channel.basicPublish(NAME_EXCHANGE, SECOND_ROUTING_KEY, null, secondMessage.getBytes());
 
             System.out.print("[x] Sent  '" + message + "'");
         } catch (Exception e) {

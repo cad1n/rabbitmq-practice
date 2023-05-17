@@ -27,14 +27,13 @@ public class SecondReceiverWork {
         factory.setPort(5672);
 
         Connection connection = factory.newConnection();
-        //System.out.println(connection.hashCode());
 
         //creating a new channel
-        Channel channel1 = connection.createChannel();
-        System.out.println(channel1);
+        Channel channel = connection.createChannel();
+        System.out.println(channel);
 
         //declaring the queue that will be used
-        channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
+        channel.queueDeclare(NAME_QUEUE, false, false, false, null);
 
         //setting up the callback logging to confirm that the message has been received
         DeliverCallback deliverCallback = (ConsumerTag, delivery) -> {
@@ -46,13 +45,13 @@ public class SecondReceiverWork {
                 e.printStackTrace();
             } finally {
                 System.out.println("[X] Done");
-                channel1.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
             }
         };
 
         //consuming the messages
-        boolean autoAck = false; //ack is true = you will utilize it
-        channel1.basicConsume(NAME_QUEUE, autoAck, deliverCallback, ConsumerTag -> {
+        boolean autoAck = false; //if auto ack is false the server should expect explicit acknowledgements
+        channel.basicConsume(NAME_QUEUE, autoAck, deliverCallback, ConsumerTag -> {
         });
     }
 }
