@@ -1,4 +1,4 @@
-package com.example.rabbitmq.practice;
+package workqueue;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -7,33 +7,31 @@ import com.rabbitmq.client.ConnectionFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Sender {
+public class SenderWork {
 
-    private static final String NAME_QUEUE = "HELLO";
-    private static final Logger logger = Logger.getLogger(Sender.class.getName());
+    private static final String NAME_QUEUE = "Work";
+    private static final Logger logger = Logger.getLogger(SenderWork.class.getName());
 
     public static void main(String[] args) {
+
         // creating the connection
         // setting creation information
-
         ConnectionFactory factory = getConnectionFactory();
 
         try (Connection connection = factory.newConnection();
-             Channel channel1 = connection.createChannel()){
+             Channel channel = connection.createChannel()) {
 
             //declaring the queue that will be used
-            channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
+            channel.queueDeclare(NAME_QUEUE, false, false, false, null);
 
             //sending the message
-            String message = "Hello World";
-            channel1.basicPublish("", NAME_QUEUE, null, message.getBytes());
+            String message = ".......";
+            channel.basicPublish("", NAME_QUEUE, null, message.getBytes());
 
-            logger.log(Level.INFO, String.format("[x] Sent: %s ", message));
-
+            logger.log(Level.INFO, String.format("[x] Sent: %s", message));
         } catch (Exception e) {
-            logger.log(Level.WARNING, String.format("Error while creating channel or connection: %s", e.getMessage()));
+            logger.log(Level.SEVERE, "Error while consuming messages", e);
         }
-
     }
 
     private static ConnectionFactory getConnectionFactory() {

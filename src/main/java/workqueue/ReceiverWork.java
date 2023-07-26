@@ -1,4 +1,4 @@
-package com.example.rabbitmq.practice;
+package workqueue;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -9,14 +9,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Receiver {
-    private static final String NAME_QUEUE = "HELLO";
-    private static final Logger logger = Logger.getLogger(Receiver.class.getName());
+public class ReceiverWork {
+    private static final String NAME_QUEUE = "Work";
+    private static final Logger logger = Logger.getLogger(ReceiverWork.class.getName());
+
+    private static void doWork(String task) throws InterruptedException {
+        for (char ch : task.toCharArray()) {
+            if (ch == '.') Thread.sleep(1000);
+        }
+    }
 
     public static void main(String[] args) throws Exception {
+
         // creating the connection
         // setting creation information
-
         ConnectionFactory factory = getConnectionFactory();
 
         try (Connection connection = factory.newConnection();
@@ -28,11 +34,20 @@ public class Receiver {
             //setting up the callback logging to confirm that the message has been received
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-               logger.log(Level.INFO, String.format("[*] Received message: %s ", message));
+                logger.log(Level.INFO, String.format("[*] Received message: %s ", message));
+                try {
+                    doWork(message);
+                } catch (Exception e) {
+                    logger.log(Level.SEVERE, "Error while consuming messages", e);
+                    Thread.currentThread().interrupt();
+                } finally {
+                    logger.info("[X] Done");
+                }
             };
 
             //consuming the messages
-            channel.basicConsume(NAME_QUEUE, true, deliverCallback, consumerTag -> {
+            boolean autoAck = true; //if auto ack is true the server should consider messages acknowledged once delivered
+            channel.basicConsume(NAME_QUEUE, autoAck, deliverCallback, consumerTag -> {
             });
         }
     }
