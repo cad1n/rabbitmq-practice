@@ -1,39 +1,39 @@
-package com.example.rabbitmq.practice;
+package pubsub;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Sender {
+public class SenderPubSub {
 
-    private static final String NAME_QUEUE = "HELLO";
-    private static final Logger logger = Logger.getLogger(Sender.class.getName());
+    private static final String NAME_EXCHANGE = "fanoutExchange";
+    private static final Logger logger = Logger.getLogger(SenderPubSub.class.getName());
 
     public static void main(String[] args) {
+
         // creating the connection
         // setting creation information
-
         ConnectionFactory factory = getConnectionFactory();
 
         try (Connection connection = factory.newConnection();
-             Channel channel1 = connection.createChannel()){
+             Channel channel = connection.createChannel()){
 
-            //declaring the queue that will be used
-            channel1.queueDeclare(NAME_QUEUE, false, false, false, null);
+            //declaring the exchange that will be used
+            channel.exchangeDeclare(NAME_EXCHANGE, "fanout");
 
             //sending the message
-            String message = "Hello World";
-            channel1.basicPublish("", NAME_QUEUE, null, message.getBytes());
+            String message = "Hello! This is a pub/sub system";
+            channel.basicPublish(NAME_EXCHANGE, "", null, message.getBytes());
 
             logger.log(Level.INFO, String.format("[x] Sent: %s ", message));
-
-        } catch (Exception e) {
+        } catch (IOException | TimeoutException e) {
             logger.log(Level.WARNING, String.format("Error while creating channel or connection: %s", e.getMessage()));
         }
-
     }
 
     private static ConnectionFactory getConnectionFactory() {

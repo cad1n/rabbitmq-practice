@@ -1,29 +1,26 @@
-package TopicExchange;
+package topicexchange;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SenderTopic {
 
     private static final String NAME_EXCHANGE = "topicExchange";
+    private static final Logger logger = Logger.getLogger(SenderTopic.class.getName());
 
 
     public static void main(String[] args) {
 
         // creating the connection
         // setting creation information
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        factory.setUsername("admin");
-        factory.setPassword("pass123");
-        factory.setPort(5672);
+        ConnectionFactory factory = getConnectionFactory();
 
-        try (Connection connection = factory.newConnection()) {
-
-            //creating a new channel
-            Channel channel = connection.createChannel();
-            System.out.println(channel);
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()) {
 
             //declaring the exchange that will be used
             channel.exchangeDeclare(NAME_EXCHANGE, "topic");
@@ -38,9 +35,18 @@ public class SenderTopic {
             channel.basicPublish(NAME_EXCHANGE, routingKey1, null, message.getBytes());
             channel.basicPublish(NAME_EXCHANGE, routingKey2, null, secondMessage.getBytes());
 
-            System.out.print("[x] Sent  '" + message + "'");
+            logger.log(Level.INFO, String.format("[x] Sent: %s ", message));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, String.format("Error while consuming messages: %s", e.getMessage()));
         }
+    }
+
+    private static ConnectionFactory getConnectionFactory() {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        factory.setUsername("admin");
+        factory.setPassword("pass123");
+        factory.setPort(5672);
+        return factory;
     }
 }
